@@ -143,4 +143,4 @@ Make sure to configure your credentials securely within n8n.
 
 ## Author
 
-Developed as a
+Developed as a portfolio project to demonstrate practical applications of Generative AI, prompt engineering and workflow automation.
