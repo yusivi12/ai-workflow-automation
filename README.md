@@ -62,10 +62,10 @@ Customer Message
 
 ### Categories
 
-- Card
-- Account
-- Insurance
-- Others
+- Card (Cartão)
+- Account (Conta)
+- Insurance (Seguro)
+- Others (Outros)
 
 ### Sentiment
 
