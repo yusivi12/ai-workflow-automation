@@ -88,6 +88,22 @@ Customer Message
 | JavaScript | Data extraction and processing |
 | Google Sheets | Data storage and organization |
 
+## Project Documentation
+
+- [System Architecture](docs/architecture.md)
+- [Workflow Documentation](workflow/README.md)
+- [n8n Workflow Export](workflow/workflow.example.json)
+
+## Screenshots
+
+### Workflow Overview
+
+![n8n Workflow](screenshots/workflow-overview.png)
+
+### Google Sheets Results
+
+![Google Sheets Results](screenshots/google-sheets-results.png)
+
 ## Testing
 
 The workflow was tested with different simulated customer scenarios, including:
