@@ -96,11 +96,15 @@ Customer Message
 
 ## Screenshots
 
-### Workflow Overview
+### n8n Workflow Overview
+
+Visual representation of the automated workflow and its connected nodes.
 
 ![n8n Workflow](screenshots/workflow-overview.png)
 
 ### Google Sheets Results
+
+Example of AI-generated customer service triage results stored in Google Sheets.
 
 ![Google Sheets Results](screenshots/google-sheets-results.png)
 
