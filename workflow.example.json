@@ -1,0 +1,246 @@
+{
+  "name": "Triagem de mensagens de atendimento",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Triagem de mensagens de atendimento",
+        "formDescription": "Cole a mensagem do cliente no campo abaixo. Use apenas mensagens de teste, nunca dados reais.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Mensagem do cliente",
+              "fieldType": "textarea",
+              "placeholder": "Ex.: Meu cartão foi bloqueado e preciso pagar uma conta hoje...",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4769b4a7-5357-4fd3-b835-89fcc8a8c324",
+      "name": "On form submission",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "REDACTED"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Analise a mensagem de cliente abaixo.\n\nMensagem: {{ $json[\"Mensagem do cliente\"] }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "Você é um assistente de triagem de atendimento ao cliente de um banco. Classifique a mensagem do cliente. Categorias válidas: Cartão, Conta, Seguro ou Outros. Sentimento: Positivo, Neutro ou Negativo. Urgência: Alta, Média ou Baixa (use Alta quando houver impacto financeiro imediato, bloqueio de acesso ou cliente muito insatisfeito). Sugira uma resposta curta, educada e empática em português. Nunca prometa prazos nem peça dados sensíveis, como senha ou CVV. \n\n REGRAS ADICIONAIS PARA A GERAÇÃO DE RESPOSTAS:  1. Nunca afirme que realizou uma ação no sistema bancário. 2. Nunca prometa bloqueio, desbloqueio, cancelamento, transferência ou contestação de transações. 3. Nunca diga que transferiu o atendimento para um especialista se essa funcionalidade não estiver disponível. 4. Quando identificar uma possível fraude ou compra não reconhecida, oriente o cliente a procurar imediatamente um canal oficial do banco para receber assistência. 5. Nunca prometa resultados ou prazos. 6. Utilize uma linguagem profissional, natural, empática e objetiva. 7. Não solicite informações confidenciais. 8. Diferencie dúvidas informativas de situações que exigem providências imediatas.  \n\nCRITÉRIOS DE CLASSIFICAÇÃO DE URGÊNCIA:\n\n- ALTA: situações envolvendo suspeita de fraude, compras não reconhecidas, movimentações financeiras indevidas, bloqueio de acesso ou risco de prejuízo financeiro imediato.\n\n- MÉDIA: problemas que impedem ou dificultam a utilização de um serviço, solicitações com prazo definido, dificuldades recorrentes ou situações que exigem acompanhamento, mas sem risco financeiro imediato.\n\n- BAIXA: dúvidas informativas, elogios, solicitações simples, orientações gerais ou situações sem impacto relevante na utilização dos serviços.\n\nIMPORTANTE: Não classifique automaticamente toda solicitação como Baixa apenas porque não existe risco financeiro imediato. Considere também o impacto na experiência do cliente, a dificuldade enfrentada e o prazo informado."
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "id": "1eefd1f5-3bd3-4f53-95d0-864ad0437db0",
+      "name": "Basic LLM Chain",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        256,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash-lite",
+        "options": {}
+      },
+      "id": "77bc8f2d-3e49-4240-9ff2-79e34aff1f4c",
+      "name": "Google Gemini Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        160,
+        208
+      ],
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "YOUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": "AI Customer Analytics – Atendimento",
+          "cachedResultUrl": "REDACTED"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "REDACTED"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Date": "={{ $json.date }}",
+            "Customer Message": "={{ $json.customer_message }}",
+            "Category": "={{ $json.category }}",
+            "Urgency": "={{ $json.urgency }}",
+            "Suggested Response": "={{ $json.suggested_response }}",
+            "Sentiment": "={{ $json.sentiment }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Customer Message",
+              "displayName": "Customer Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Category",
+              "displayName": "Category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Sentiment",
+              "displayName": "Sentiment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Urgency",
+              "displayName": "Urgency",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Suggested Response",
+              "displayName": "Suggested Response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        848,
+        16
+      ],
+      "id": "a9c6f1d2-cd90-46db-9803-e8851d022545",
+      "name": "Append row in sheet",
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nreturn items.map(item => {\n  const text = item.json.text || '';\n\n  // Extract information from Gemini's response\n  const category = text.match(/\\*\\*Categoria:\\*\\*\\s*(.+)/)?.[1]?.trim();\n  const sentiment = text.match(/\\*\\*Sentimento:\\*\\*\\s*(.+)/)?.[1]?.trim();\n  const urgency = text.match(/\\*\\*Urgência:\\*\\*\\s*(.+)/)?.[1]?.trim();\n\n  const response = text.match(\n    /\\*\\*Sugestão de resposta:\\*\\*\\s*([\\s\\S]*)/i\n  )?.[1]?.trim();\n\n  // Retrieve the original form submission\n  const formData = $('On form submission').first().json;\n\n  const customerMessage = Object.values(formData).find(\n    value => typeof value === 'string' && value.length > 30\n  ) || '';\n\n  return {\n    json: {\n      date: new Date().toISOString(),\n      customer_message: customerMessage,\n      category: category,\n      sentiment: sentiment,\n      urgency: urgency,\n      suggested_response: response\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        608,
+        96
+      ],
+      "id": "b6f2dd89-0918-4a68-9c5a-08b73239c208",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "a14e7f49-1e4e-4196-bab0-8d65231dd5cd",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "REDACTED"
+  },
+  "nodeGroups": [],
+  "id": "5zCTP51dRAWGta2r",
+  "tags": []
+}
